@@ -201,6 +201,9 @@ function handleKeyPress(event) {
         case ' ':
             pauseGame();
             break;
+        case 'Enter': // Hard drop key
+            hardDrop();
+        break;
     }
 }
 
@@ -208,6 +211,18 @@ function handleKeyPress(event) {
 function pauseGame() {
     isPaused = !isPaused;
     pauseMenu.classList.toggle('hidden');
+}
+
+// **Hard Drop**
+function hardDrop() {
+    while (!checkCollision()) {
+        currentPosition.y += 1; // Move down until collision
+    }
+    currentPosition.y -= 1; // Adjust position to the last valid position
+    lockPiece(); // Lock the piece in place
+    clearLines(); // Clear any completed lines
+    spawnPiece(); // Spawn a new piece
+    drawPiece(); // Draw the new piece
 }
 
 // **Continue Game**
@@ -242,8 +257,17 @@ function updateLives() {
 // **Game Over**
 function gameOver() {
     clearInterval(gameInterval);
+    resetGridStyles(); // Reset grid styles before showing the alert
     alert('Game Over!');
     restartGame();
+}
+
+// **Reset Grid Styles**
+function resetGridStyles() {
+    while (grid.firstChild) {
+        grid.removeChild(grid.firstChild);
+    }
+    createGrid(); // Recreate the grid to ensure it has the correct dimensions
 }
 
 // **Start Game**
